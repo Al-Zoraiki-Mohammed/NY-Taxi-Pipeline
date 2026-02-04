@@ -1,0 +1,16 @@
+# Data
+data/
+*.csv
+*.parquet
+
+# Python / uv
+__pycache__/
+.venv/
+.uv/
+
+# Environment / Secrets
+.env
+
+# Docker / DB
+pgadmin_data/
+ny_taxi_postgres_data/

@@ -1,0 +1,51 @@
+services:
+  pgdatabase:
+    image: postgres:18
+    # Add health check to make sure that postgres ready for connections.
+    healthcheck:
+      # Docker runs this command inside the Postgres container every 5 seconds.
+      test: ["CMD-SHELL", "pg_isready -U root -d ny_taxi"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    environment:
+      POSTGRES_USER: "root"
+      POSTGRES_PASSWORD: "root"
+      POSTGRES_DB: "ny_taxi"
+    volumes:
+      - ny_taxi_postgres_data:/var/lib/postgresql
+    ports:
+      - "5432:5432"
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "admin@admin.com"
+      PGADMIN_DEFAULT_PASSWORD: "admin"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    ports:
+      - "8085:80"
+
+  # The Data Pipeline Service
+  taxi_pipeline:
+    build: .
+    depends_on:
+      pgdatabase:
+        #taxi_pipeline won't start scripts until Postgres ready for connections!"
+        condition: service_healthy
+    volumes:
+      # Maps local 'data' folder to the container's '/app/data'.
+      - ./data:/app/data
+    environment:
+      # Pass DB details as env vars so scripts can read them
+      DB_HOST: "pgdatabase"
+      DB_USER: "root"
+      DB_PASS: "root"
+      DB_NAME: "ny_taxi"
+    # This gets appended to ENTRYPOINT ["python", "pipeline.py"]
+    command: ["--year", "2024", "--month", "01"]
+
+volumes:
+  ny_taxi_postgres_data:
+  pgadmin_data:
