@@ -14,3 +14,6 @@ __pycache__/
 # Docker / DB
 pgadmin_data/
 ny_taxi_postgres_data/
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
