@@ -29,8 +29,7 @@ Unlike simple scripts, this pipeline is split into functional modules orchestrat
 
 - We use Docker Compose to spin up the database and the management GUI.
 
-- Bash
-- docker compose up -d pgdatabase pgadmin
+- Bash> docker compose up -d pgdatabase pgadmin
 2. Run the Modular Pipeline
 
 - Because the pipeline is versatile, you tell it exactly what data to process. You don't need to change the code to change the date.
